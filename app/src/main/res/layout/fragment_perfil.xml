@@ -11,7 +11,7 @@
         android:layout_width="202dp"
         android:layout_height="46dp"
         android:layout_marginTop="340dp"
-        android:onClick="irAMain"
+        android:onClick="cerrarSesion"
         android:text="Cerrar Sesión"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
