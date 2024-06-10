@@ -63,7 +63,6 @@ public class RegistrarIngresoActivity extends AppCompatActivity {
                         })
                         .addOnFailureListener(e -> e.printStackTrace()) ;
             }
-            }
         });
 
     }
