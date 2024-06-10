@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.example.lab6_20200638_iot.Bean.Ingreso;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +67,8 @@ public class EgresosFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Código para registrar un nuevo ingreso
+                Intent intent = new Intent(getActivity(), RegistrarEgresoActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -93,6 +97,20 @@ public class EgresosFragment extends Fragment {
         // Ejemplo de ingresos
         ingresoList.add(new Ingreso("Ingreso 1", 100.0, "2023-06-01"));
         ingresoList.add(new Ingreso("Ingreso 2", 200.0, "2023-06-02"));*/
+        db.collection("egresos")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Egreso egreso = document.toObject(Egreso.class);
+                            egresoList.add(egreso);
+                            Log.d("msg-test", "Nombre: " + egreso.getTitulo());
+                            Log.d("msg-test", "Correo: " + egreso.getDescription());
+                        }
+                    } else {
+                        Log.d("msg-test", "Error getting documents: ", task.getException());
+                    }
+                });
         adapter.notifyDataSetChanged();
     }
 }

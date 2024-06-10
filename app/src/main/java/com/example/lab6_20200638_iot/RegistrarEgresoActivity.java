@@ -51,8 +51,7 @@ public class RegistrarEgresoActivity extends AppCompatActivity {
                 egreso.setMonto( Double.parseDouble(montoEditText.getText().toString().trim()) );
                 egreso.setIduser( currentUser.getUid());
                 db.collection( "egresos" )
-                        .document()
-                        .set(egreso)
+                        .add(egreso)
                         .addOnSuccessListener(unused -> {
                             Log.d("msg-test" ,"Data guardada exitosamente ");
                             Intent intent = new Intent(RegistrarEgresoActivity.this, MainActivity.class);

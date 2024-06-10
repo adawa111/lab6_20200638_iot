@@ -1,9 +1,11 @@
 package com.example.lab6_20200638_iot;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,7 @@ import com.example.lab6_20200638_iot.Bean.Ingreso;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +68,8 @@ public class IngresosFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Código para registrar un nuevo ingreso
+                Intent intent = new Intent(getActivity(), RegistrarIngresoActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -93,6 +98,21 @@ public class IngresosFragment extends Fragment {
         // Ejemplo de ingresos
         ingresoList.add(new Ingreso("Ingreso 1", 100.0, "2023-06-01"));
         ingresoList.add(new Ingreso("Ingreso 2", 200.0, "2023-06-02"));*/
+
+        db.collection("ingresos")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Ingreso ingreso = document.toObject(Ingreso.class);
+                            ingresoList.add(ingreso);
+                            Log.d("msg-test", "Nombre: " + ingreso.getTitulo());
+                            Log.d("msg-test", "Correo: " + ingreso.getDescription());
+                        }
+                    } else {
+                        Log.d("msg-test", "Error getting documents: ", task.getException());
+                    }
+                });
         adapter.notifyDataSetChanged();
     }
 }

@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.lab6_20200638_iot.Bean.Egreso;
+import com.example.lab6_20200638_iot.Bean.Ingreso;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -47,15 +48,14 @@ public class RegistrarIngresoActivity extends AppCompatActivity {
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Egreso egreso = new Egreso() ;
-                egreso.setTitulo(tituloEditText.getText().toString().trim());
-                egreso.setDescription( descripcionEditText.getText().toString().trim());
+                Ingreso ingreso = new Ingreso() ;
+                ingreso.setTitulo(tituloEditText.getText().toString().trim());
+                ingreso.setDescription( descripcionEditText.getText().toString().trim());
                 //egreso.setFecha(fechaEditText.getText().toString().trim());
-                egreso.setMonto( Double.parseDouble(montoEditText.getText().toString().trim()) );
-                egreso.setIduser( currentUser.getUid());
+                ingreso.setMonto( Double.parseDouble(montoEditText.getText().toString().trim()) );
+                ingreso.setIduser( currentUser.getUid());
                 db.collection( "ingresos" )
-                        .document()
-                        .set(egreso)
+                        .add(ingreso)
                         .addOnSuccessListener(unused -> {
                             Log.d("msg-test" ,"Data guardada exitosamente ");
                             Intent intent = new Intent(RegistrarIngresoActivity.this, MainActivity.class);

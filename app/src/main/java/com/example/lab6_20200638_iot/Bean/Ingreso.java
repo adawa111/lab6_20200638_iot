@@ -26,6 +26,13 @@ public class Ingreso implements Serializable {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setIduser(String iduser) {
+        this.iduser = iduser;
+    }
 
     public Ingreso(String user, String titulo, String description, double monto, Date fecha) {
         this.titulo = titulo;
