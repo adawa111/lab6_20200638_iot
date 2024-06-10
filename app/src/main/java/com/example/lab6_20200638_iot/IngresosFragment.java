@@ -54,14 +54,13 @@ public class IngresosFragment extends Fragment {
         recyclerViewIngresos.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerViewIngresos.setAdapter(adapter);
 
-        db = FirebaseFirestore.getInstance();
 
+
+        db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            /*Toast.makeText(EgresosFragment.this, "Inicio de Sesión Exitoso", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);*/
+            cargarIngresos(currentUser);
         }
 
         btnRegistrarIngreso.setOnClickListener(new View.OnClickListener() {
@@ -77,42 +76,56 @@ public class IngresosFragment extends Fragment {
             @Override
             public void onEditClick(int position) {
                 // Código para editar el ingreso
+                Ingreso ingreso = ingresoList.get(position);
+                Intent intent = new Intent(getActivity(), EditarEgresoActivity.class);
+                intent.putExtra("DOCUMENT_ID", ingreso.getId());
+                intent.putExtra("ingreso",ingreso);
+                startActivity(intent);
+
+
             }
 
             @Override
             public void onDeleteClick(int position) {
                 // Código para eliminar el ingreso
                 ingresoList.remove(position);
+                db.collection("ingresos").document(ingresoList.get(position).getId())
+                        .delete()
+                        .addOnSuccessListener(unused -> {
+                            Log.d("msg-test", "Documento borrado exitosamente");
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                            startActivity(intent);
+                        })
+                        .addOnFailureListener(e -> e.printStackTrace());
                 adapter.notifyItemRemoved(position);
             }
         });
 
-        // Método para cargar ingresos
-        cargarIngresos();
-
         return view;
     }
 
-    private void cargarIngresos() {
+    private void cargarIngresos(FirebaseUser currentUser) {
         /*// Código para cargar la lista de ingresos
         // Ejemplo de ingresos
         ingresoList.add(new Ingreso("Ingreso 1", 100.0, "2023-06-01"));
         ingresoList.add(new Ingreso("Ingreso 2", 200.0, "2023-06-02"));*/
 
-        db.collection("ingresos")
+        db.collection("ingresos").whereEqualTo("iduser",currentUser.getUid())
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Ingreso ingreso = document.toObject(Ingreso.class);
+                            ingreso.setId(document.getId());
                             ingresoList.add(ingreso);
                             Log.d("msg-test", "Nombre: " + ingreso.getTitulo());
                             Log.d("msg-test", "Correo: " + ingreso.getDescription());
+                            adapter.notifyDataSetChanged();
                         }
                     } else {
                         Log.d("msg-test", "Error getting documents: ", task.getException());
                     }
                 });
-        adapter.notifyDataSetChanged();
+
     }
 }

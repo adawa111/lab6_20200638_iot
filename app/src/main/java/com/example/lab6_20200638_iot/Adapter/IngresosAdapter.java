@@ -87,7 +87,12 @@ public class IngresosAdapter extends RecyclerView.Adapter<IngresosAdapter.Ingres
         Ingreso currentIngreso = ingresoList.get(position);
         holder.tituloTextView.setText(currentIngreso.getTitulo());
         holder.montoTextView.setText(String.valueOf(currentIngreso.getMonto()));
-        holder.fechaTextView.setText(dateFormat.format(currentIngreso.getFecha()));
+        try{
+            holder.fechaTextView.setText(dateFormat.format(currentIngreso.getFecha()));
+        }catch (NullPointerException e){
+            holder.fechaTextView.setText("Fecha no especificada.");
+        }
+
     }
 
     @Override

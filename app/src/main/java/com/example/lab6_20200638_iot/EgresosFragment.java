@@ -54,13 +54,10 @@ public class EgresosFragment extends Fragment {
         recyclerViewEgresos.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
-
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            /*Toast.makeText(EgresosFragment.this, "Inicio de Sesión Exitoso", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);*/
+            cargarEgresos(currentUser);
         }
 
         btnRegistrarEgreso.setOnClickListener(new View.OnClickListener() {
@@ -75,42 +72,53 @@ public class EgresosFragment extends Fragment {
         adapter.setOnItemClickListener(new EgresosAdapter.OnItemClickListener() {
             @Override
             public void onEditClick(int position) {
-                // Código para editar el ingreso
+                Egreso egreso = egresoList.get(position);
+                Intent intent = new Intent(getActivity(), EditarEgresoActivity.class);
+                intent.putExtra("DOCUMENT_ID", egreso.getId());
+                intent.putExtra("egreso",egreso);
+                startActivity(intent);
             }
 
             @Override
             public void onDeleteClick(int position) {
                 // Código para eliminar el ingreso
                 egresoList.remove(position);
+                db.collection("egresos").document(egresoList.get(position).getId())
+                        .delete()
+                        .addOnSuccessListener(unused -> {
+                            Log.d("msg-test", "Documento borrado exitosamente");
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                            startActivity(intent);
+                        })
+                        .addOnFailureListener(e -> e.printStackTrace());
                 adapter.notifyItemRemoved(position);
             }
         });
 
-        // Método para cargar ingresos
-        cargarEgresos();
-
         return view;
     }
 
-    private void cargarEgresos() {
+    private void cargarEgresos(FirebaseUser currentUser) {
         /*// Código para cargar la lista de ingresos
         // Ejemplo de ingresos
         ingresoList.add(new Ingreso("Ingreso 1", 100.0, "2023-06-01"));
         ingresoList.add(new Ingreso("Ingreso 2", 200.0, "2023-06-02"));*/
-        db.collection("egresos")
+        db.collection("egresos").whereEqualTo("iduser",currentUser.getUid())
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Egreso egreso = document.toObject(Egreso.class);
+                            egreso.setId(document.getId());
                             egresoList.add(egreso);
                             Log.d("msg-test", "Nombre: " + egreso.getTitulo());
                             Log.d("msg-test", "Correo: " + egreso.getDescription());
+                            adapter.notifyDataSetChanged();
                         }
                     } else {
                         Log.d("msg-test", "Error getting documents: ", task.getException());
                     }
                 });
-        adapter.notifyDataSetChanged();
+
     }
 }

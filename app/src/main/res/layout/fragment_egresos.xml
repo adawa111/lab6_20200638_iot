@@ -10,7 +10,7 @@
         android:id="@+id/btnRegistrarEgreso"
         android:layout_width="202dp"
         android:layout_height="46dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="80dp"
         android:text="Registrar Egreso"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -22,12 +22,12 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewEgresos"
-        android:layout_width="0dp"
-        android:layout_height="572dp"
+        android:layout_width="405dp"
+        android:layout_height="473dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnRegistrarEgreso"
-        app:layout_constraintVertical_bias="0.337" />
+        app:layout_constraintVertical_bias="0.263" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

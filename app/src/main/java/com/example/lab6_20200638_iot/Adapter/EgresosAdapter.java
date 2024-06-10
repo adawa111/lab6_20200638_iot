@@ -89,7 +89,11 @@ public class EgresosAdapter extends RecyclerView.Adapter<EgresosAdapter.EgresoVi
         Egreso currentEgreso = egresoList.get(position);
         holder.tituloTextView.setText(currentEgreso.getTitulo());
         holder.montoTextView.setText(String.valueOf(currentEgreso.getMonto()));
-        holder.fechaTextView.setText(dateFormat.format(currentEgreso.getFecha()));
+        try{
+            holder.fechaTextView.setText(dateFormat.format(currentEgreso.getFecha()));
+        }catch (NullPointerException e){
+            holder.fechaTextView.setText("Fecha no especificada.");
+        }
     }
 
     @Override
